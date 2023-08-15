@@ -1,0 +1,94 @@
+/* Chinook */
+
+/*Customers not from USA*/
+SELECT FirstName, LastName, Address, City, State, Country
+FROM chinook.customers
+WHERE Country <> 'USA';
+
+/*Customers from Brazil*/
+SELECT FirstName, LastName, Address, City, State, Country
+FROM chinook.customers
+WHERE Country = 'Brazil';
+
+/*Invoices from Brazil*/
+SELECT FirstName, LastName, InvoiceID, InvoiceDate, BillingCountry
+FROM chinook.invoices as inv
+LEFT JOIN chinook.customers as cust
+ON inv.CustomerId = cust.CustomerId
+WHERE Country = 'Brazil';
+
+/*Employees who are Sales Agents*/
+SELECT * 
+FROM chinook.employees;
+
+SELECT *
+FROM chinook.employees
+WHERE Title like '%Agent%';
+
+/*Distinct billing from Countries*/
+SELECT *
+FROM chinook.invoices;
+
+SELECT distinct BillingCountry, count(InvoiceId)
+FROM chinook.invoices
+GROUP BY BillingCountry;
+
+/*Invoices associated with each sales agent*/
+SELECT *
+FROM chinook.invoices;
+
+SELECT *
+FROM chinook.employees;
+
+SELECT *
+FROM chinook.customers;
+
+SELECT emp.LastName, emp.Firstname, inv.InvoiceId
+FROM chinook.Employees as emp 
+JOIN chinook.Customers as cust 
+    ON cust.SupportRepId = emp.EmployeeId
+JOIN chinook.Invoices as Inv 
+    ON Inv.CustomerId = cust.CustomerId;
+
+/*Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers*/
+SELECT emp.lastname, cust.firstname, cust.lastname, cust.country, inv.total
+FROM chinook.employees as emp
+JOIN chinook.customers as cust
+    ON cust.supportrepid = emp.employeeid
+JOIN chinook.invoices as inv
+    ON inv.customerid = cust.customerid;
+    
+/* Invoices 2009 */
+SELECT *
+FROM chinook.invoices;
+
+SELECT count(*)
+FROM chinook.invoices
+WHERE invoicedate like '2009%';
+
+/* Sales 2009 */
+SELECT sum(total)
+FROM chinook.invoices
+WHERE invoicedate like '2009%';
+
+/* Track name and invoice line id */
+SELECT *
+FROM chinook.invoice_items;
+
+SELECT *
+FROM chinook.tracks;
+
+SELECT tracks.name, invitem.invoicelineid
+FROM chinook.tracks as tracks
+JOIN chinook.invoice_items as invitem
+    ON tracks.trackid = invitem.trackid;
+    
+/* purchased track name AND artist name with each invoice line ID */
+SELECT art.name, tracks.name, invitem.invoicelineid
+FROM chinook.tracks as tracks
+INNER JOIN chinook.invoice_items as invitem
+    ON tracks.trackid = invitem.trackid
+INNER JOIN chinook.albums as alb
+    ON tracks.albumid = alb.albumid
+INNER JOIN chinook.artists as art
+    on alb.artistid = art.artistid;
