@@ -1,0 +1,80 @@
+/*What is the average total amount (includingtips) spent per order?*/
+
+SELECT
+avg(total)
+FROM fastkitchen.orders
+
+/*Compare the average subtotals, tips, and totals spent by each order type (onsite, carryout, delivery). Are there any major differences between order types?*/
+
+SELECT
+avg(subtotal) as avg_subtotal,
+avg(tip) as avg_tip,
+avg(total) as avg_total,
+order_type
+FROM fastkitchen.orders
+GROUP BY order_type
+
+/*Write two different queries to count the number of orders mad by registered users and the number of orders made by non-registered customers. Remember, non-registered customers don't have a user id
+Which group is larger?*/
+
+SELECT
+count(order_id)
+FROM fastkitchen.orders
+WHERE user_id IS NOT NULL
+
+SELECT
+count(order_id)
+FROM fastkitchen.orders
+WHERE user_id IS NULL
+
+/*Write a query that counts the number of users by city. Which city has the highest number of users and how many users are there?*/
+
+SELECT
+count(user_id),
+city
+FROM fastkitchen.users
+GROUP BY city
+ORDER BY count(user_id) DESC
+
+/*Expand the query so that you group by zipcode as well. Does this help explain what you found in part 2A?*/
+
+SELECT
+count(user_id),
+zip,
+city
+FROM fastkitchen.users
+GROUP BY city, zip
+ORDER BY city, count(user_id) DESC
+
+/*To start, simply write a query that returns all of the columns, joining the two tables on the user_id column. Make sure that you choose a join that keeps all of the orders, even when there isn't a 
+matching registered user.*/
+
+SELECT
+*
+FROM fastkitchen.orders as o
+LEFT JOIN fastkitchen.users as u
+ON o.user_id = u.user_id
+
+/*Add to the query from 3A to answer the following question: in which zip code is the user with the highest amount of money spent?*/
+
+SELECT
+u.user_id,
+u.zip,
+sum(o.total) as total_spent
+FROM fastkitchen.orders as o
+LEFT JOIN fastkitchen.users as u
+ON o.user_id = u.user_id
+GROUP BY u.user_id, u.zip
+ORDER BY total_spent DESC
+
+/*Write a query that returns the average total amount spent per order by zip code. How many of the zip codes spend more on average than non-registered guest customers?*/
+
+SELECT
+u.zip,
+avg(o.total) as avg_total
+FROM fastkitchen.orders as o
+LEFT JOIN fastkitchen.users as u
+ON o.user_id = u.user_id
+GROUP BY u.zip
+ORDER BY avg_total DESC
+
