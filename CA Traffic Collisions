@@ -1,0 +1,80 @@
+/*Write a query and answer the following question: How many parties are cited as being at fault for a collision?*/
+
+SELECT
+  count(case_id),
+  at_fault
+FROM switrs.parties
+GROUP BY at_fault
+
+/*The party_sobriety field takes on a value of 'B' when the party is known to have been drinking, and under the influence of alcohol. Modify your query from part A to answer the following question:
+How many parties were found at fault while under the influence of alcohol?*/
+
+SELECT
+ count(party_sobriety),
+ at_fault
+FROM switrs.parties
+WHERE party_sobriety = 'B'
+GROUP BY at_fault
+
+/*the oaf_1 or oaf_2 feature takes on a value of 'F' if inattention was a factor in the collision. Modify your query to answer the following question: How many parties were found at fault while lack of
+attention was a factor in the collision?*/
+
+SELECT
+ count(oaf_1),
+ count(oaf_2),
+ at_fault
+FROM switrs.parties
+WHERE oaf_1 = 'F'
+OR oaf_2 = 'F'
+GROUP BY at_fault
+
+/*Write a query that returns the number of collisions, grouped by day of the week. Which days have the highest number of collisions, and which days have the least?*/
+
+SELECT
+  count(case_id) as n_collisions,
+  day_of_week
+FROM switrs.collisions
+GROUP BY day_of_week
+ORDER BY n_collisions DESC
+
+/*Write a new query that inner joins the two tables on that column, returning the number of rows*/
+
+SELECT
+  count(a.case_id)
+FROM switrs.collisions AS a
+INNER JOIN switrs.parties AS b
+ON a.case_id = b.case_id
+
+/*Combine the queries from parts A and B to return the number of collisions grouped by the day of the week. Add a condition for the involved parties so that we only count accidents where the party was
+found to be at fault AND under the influence of alcohol.*/
+
+SELECT
+  count(a.case_id) as n_collision,
+  a.day_of_week,
+  b.at_fault,
+  b.party_sobriety
+FROM switrs.collisions AS a
+INNER JOIN switrs.parties AS b
+ON a.case_id = b.case_id
+WHERE b.at_fault = 'Y'
+AND b.party_sobriety = 'B'
+GROUP BY a.day_of_week, b.at_fault, b.party_sobriety
+ORDER BY n_collision DESC
+
+/*Modify your query to look at the number of accidents by the day of the week where the party was found to be at fault AND innattention was a factor*/
+
+SELECT
+  count(a.case_id) as n_collision,
+  a.day_of_week,
+  b.at_fault,
+  b.oaf_1,
+  b.oaf_2
+FROM switrs.collisions AS a
+INNER JOIN switrs.parties AS b
+ON a.case_id = b.case_id
+WHERE b.at_fault = 'Y'
+AND (oaf_1 = 'F'
+OR oaf_2 = 'F')
+GROUP BY a.day_of_week, b.at_fault, b.oaf_1, b.oaf_2
+ORDER BY n_collision DESC
+
