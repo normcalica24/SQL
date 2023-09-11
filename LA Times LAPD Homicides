@@ -30,3 +30,8 @@ FROM BIT_DB.LAPD
 WHERE neighborhood = "Culver City"
 GROUP BY neighborhood
 ORDER BY count(coroners_case_number) DESC;
+
+SELECT age, count(coroners_case_number) as deaths
+FROM BIT_DB.LAPD
+GROUP BY age
+ORDER BY deaths DESC
