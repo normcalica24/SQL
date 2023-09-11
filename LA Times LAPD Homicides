@@ -35,3 +35,8 @@ SELECT age, count(coroners_case_number) as deaths
 FROM BIT_DB.LAPD
 GROUP BY age
 ORDER BY deaths DESC
+
+SELECT death_date, count(coroners_case_number) as deaths
+from BIT_DB.LAPD
+GROUP BY death_date
+ORDER BY deaths DESC;
